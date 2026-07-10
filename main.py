@@ -30,20 +30,21 @@ def run_chatbot():
             break
         
         response = None
+        errors= []
 
         # --- STEP 1: Try Anthropic ---
         if response is None:
             try:
                 response = get_chatbot_response_anthropic(user_message)
             except Exception as e:
-                pass # Silently fail or log, then move to the next check
+                errors.append(f"Anthropic failled {e}") # Silently fail or log, then move to the next check
 
         # --- STEP 2: Try OpenAI (Fallback 1) ---
         if response is None:
             try:
                 response = get_chatbot_response_openai(user_message)
             except Exception as e:
-                pass
+                errors.append(f"OpenAI failled {e}")
         
          # --- STEP 2: Try Gemini (Fallback 2) ---
         if response is None:
@@ -51,6 +52,8 @@ def run_chatbot():
                 response= get_chatbot_response_genai(user_message)
             except Exception as e:
                 print("Error: All models failed or ran out of funds.")
+                for error in errors:
+                    print(error)
 
         if response:
             print(f"\nAI {response}\n")
