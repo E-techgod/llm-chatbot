@@ -5,14 +5,14 @@ The logic for my LLM Chatbot
     OPENAI_API_KEY or ANTHROPIC_API_KEY 
 2. Initialize the chosen model
     ChatOpenAI or ChatAnhropic
-3. Initialzie a chat memory in a python script list: chat_history given that the LLMs do not have innate memory 
+3. Initialize a chat memory in a python script list: chat_history given that the LLMs do not have innate memory 
 4. Start this list (chat_history) with a System Prompt:
     "You are a helpfull coding assistant"
 5. As the conversation flows you will append the user's input and the LLM's output to the list
 6. The Chat loop, to make the app interactive wrapp the logic arround a continuous while loop.
     If the users type exit, the loop will break exiting the chat
     If the user type a question, wrap it around a Human Message Object and append it to the chat_history list
-    Then pass the entire ever-growing list of messages to the chat model using the .invoke() funciton 
+    Then pass the entire ever-growing list of messages to the chat model using the .invoke() function 
     The model will read the entire history, calculate the next response and return an AI Message, which the model will 
         print to the screen and then append it to the chat_history list to preserve the next memory 
 """

@@ -23,7 +23,7 @@ def get_chatbot_response_openai(user_message: str) -> str:
         messages=[  
             {
                 "role": "system",
-                "content": "You are a helpfull AI tutor. Explain things clearly and simple"
+                "content": "You are a helpful AI tutor. Explain things clearly and simply"
             },
             {
                 "role": "user",
@@ -52,7 +52,7 @@ def get_chatbot_response_genai(user_message: str) -> str:
         contents=user_message, # Uses contents for the user input instead of 'messages' like OpenAI
 
         config=types.GenerateContentConfig(
-            system_instruction= "You are a helpfull AI tutor. Explain things clearly and simple",
+            system_instruction= "You are a helpful AI tutor. Explain things clearly and simply",
             temperature= 0.7
         )
     )
@@ -70,17 +70,17 @@ def get_chatbot_response_anthropic(user_message: str) -> str:
         1.6. Return .content[0].text
     """
 
-    reponseAnthropicAI= clientAnthropicAI.messages.create(
+    responseAnthropicAI= clientAnthropicAI.messages.create(
 
         model="claude-haiku-4-5-20251001", 
         max_tokens=1024,
-        system="You are a helpfull AI tutor. Explain things clearly and simple",
+        system="You are a helpful AI tutor. Explain things clearly and simply",
         messages=[
             {"role": "user", "content": user_message},
         ],
         temperature=0.7
     )
 
-    return reponseAnthropicAI.content[0].text
+    return responseAnthropicAI.content[0].text
 
 
