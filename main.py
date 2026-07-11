@@ -16,49 +16,80 @@ The logic for my LLM Chatbot
     The model will read the entire history, calculate the next response and return an AI Message, which the model will 
         print to the screen and then append it to the chat_history list to preserve the next memory 
 """
-from chatbot import get_chatbot_response_genai, get_chatbot_response_openai, get_chatbot_response_anthropic
+from chatbot import get_chatbot_response
+
+SYSTEM_PROMPT= "You are a helpful AI tutor. Explain things clearly and simply"
+
+MAX_MEMORY_MESSAGES= 10 # Keep the last 10 non-system messages (Users responses)
+
+def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[dict]:
+    """
+    Keep the system message and only the most recent user/assistant messages.
+
+    Example:
+    - Always keep the system prompt.
+    - Keep only the last max_memory_messages from the rest of the conversation.
+    """
+
+    system_messages= [
+        message for message in chat_history
+        if message["role"] == "system" 
+    ]
+
+    conversation_messages=[
+        message for message in chat_history
+        if message["role"] != "system" # Includes user and assistant
+    ]
+
+    recent_messages= conversation_messages[-max_memory_limit:]
+
+    return recent_messages + system_messages
 
 def run_chatbot():
     print("Welcome to your Week 9 LLM Chatbot")
     print("Type 'exit to stop the loop")
 
+    chat_history= [
+        {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        }
+    ]
+
     while True:
-        user_message= input("You: ")
+        user_message= input("You: ").strip()
+
+        if not user_message:
+            print("Please type a message\n")
+            continue
 
         if user_message.lower() == "exit":
             print("Chatbot closed.")
             break
         
-        response = None
-        errors= []
+        chat_history.append(
+            {
+                "role" : "user",
+                "content": user_message
+            }
+        )
 
-        # --- STEP 1: Try Anthropic ---
-        if response is None:
-            try:
-                response = get_chatbot_response_anthropic(user_message)
-            except Exception as e:
-                errors.append(f"Anthropic failled {e}") # Silently fail or log, then move to the next check
-
-        # --- STEP 2: Try OpenAI (Fallback 1) ---
-        if response is None:
-            try:
-                response = get_chatbot_response_openai(user_message)
-            except Exception as e:
-                errors.append(f"OpenAI failled {e}")
-        
-         # --- STEP 2: Try Gemini (Fallback 2) ---
-        if response is None:
-            try: 
-                response= get_chatbot_response_genai(user_message)
-            except Exception as e:
-                print("Error: All models failed or ran out of funds.")
-                for error in errors:
-                    print(error)
+        response= get_chatbot_response(chat_history)
 
         if response:
-            print(f"\nAI {response}\n")
+            print(f"\nAI: {response}\n")
+
+            chat_history.append(
+
+                {
+                    "role": "assistant",
+                    "content": response
+                }
+            )
+            chat_history= trim_chat_history(chat_history, MAX_MEMORY_MESSAGES)
+            print(f"Memory size: {len(chat_history)} messages")
         else:
-            print("\nAI: Sorry, I am currently unavailable.\n")
+            print("\nAI: I'm currently unavailable")
 
 if __name__ == "__main__":
     run_chatbot()
