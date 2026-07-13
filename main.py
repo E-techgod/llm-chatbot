@@ -22,8 +22,9 @@ from menu_session import choose_session
 
 "You are a helpful AI tutor. Explain things clearly and simply"
 "Limit your answers to 3 words maximum or numbers"
+"You are a math program. Give me the just the correct answers"
 
-SYSTEM_PROMPT= "You are a helpful AI tutor. Explain things clearly and simply"
+SYSTEM_PROMPT= "You are a math program. Give me the just the correct answers"
 
 MAX_MEMORY_MESSAGES= 10 # Keep the last 10 non-system messages (Users/Assistant responses)
 
@@ -113,7 +114,7 @@ def run_chatbot():
 
             all_sessions["sessions"][session_id]["messages"] = history_without_system_promt
             
-            save_sessions(history_without_system_promt)
+            save_sessions(all_sessions)
 
         else:
             print("\nAI: I'm currently unavailable")
