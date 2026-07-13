@@ -1,4 +1,3 @@
-from turtle import title
 import uuid
 from typing import Any
 
@@ -35,3 +34,28 @@ def display_sessions(all_sessions: list[dict[str, Any]]) -> list[str]:
         print(f"{index}. {title}")
 
     return session_ids
+
+
+def select_existing_session(all_sessions: list[dict[str, Any]]) -> str | None:
+    """
+    Let the user select one saved conversation.
+    """
+
+    session_ids = display_sessions(all_sessions)
+
+    if not session_ids:
+        return None
+
+    selection = input("Select a conversation: ").strip()
+
+    try:
+        selected_index = int(selection) - 1
+
+        if selected_index < 0:
+            raise ValueError
+
+        return session_ids[selected_index]
+
+    except (ValueError, IndexError):
+        print("Invalid conversation selection.")
+        return None
