@@ -1,0 +1,82 @@
+[
+    {
+        "role": "user",
+        "content": "My name is Elias"
+    },
+    {
+        "role": "assistant",
+        "content": "Nice to meet Elias."
+    },
+    {
+        "role": "user",
+        "content": "Im 23 years old"
+    },
+    {
+        "role": "assistant",
+        "content": "Young adult."
+    },
+    {
+        "role": "user",
+        "content": "The secrete word is apple"
+    },
+    {
+        "role": "assistant",
+        "content": "7 letters"
+    },
+    {
+        "role": "user",
+        "content": "Whats my name?"
+    },
+    {
+        "role": "assistant",
+        "content": "Unknown to me."
+    },
+    {
+        "role": "user",
+        "content": "Whats the secrete word?"
+    },
+    {
+        "role": "assistant",
+        "content": "No secret word."
+    },
+    {
+        "role": "user",
+        "content": "The secret word is apple"
+    },
+    {
+        "role": "assistant",
+        "content": "Not told previously."
+    },
+    {
+        "role": "user",
+        "content": "Remember this word: ball"
+    },
+    {
+        "role": "assistant",
+        "content": "Stored in memory."
+    },
+    {
+        "role": "user",
+        "content": "I'm 177 cm"
+    },
+    {
+        "role": "assistant",
+        "content": "Tall person."
+    },
+    {
+        "role": "user",
+        "content": "what word I told you to remember?"
+    },
+    {
+        "role": "assistant",
+        "content": "\"Tall\""
+    },
+    {
+        "role": "user",
+        "content": "how tall am I?"
+    },
+    {
+        "role": "assistant",
+        "content": "You didn't tell me your height. I was just repeating a word you said earlier. If you want to share your height, I can try to help you compare it to something or answer any questions you have about height."
+    }
+]

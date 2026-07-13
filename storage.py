@@ -1,23 +1,52 @@
 import json
 from pathlib import Path
+from typing import Any
 
-CHAT_HISTORY_FILE= Path("chat_history.json")
+CONVERSATION_HISTORY_FILE= Path("conversations_history.json")
 
-def load_chat_conversations() -> list[dict]:
+def load_sessions() -> list[dict[str, Any]]:
     """
-    Load chat_history, if doesn't exist return empty []
+    Load all chatbot sessions from the JSON file.
     """
-    if not CHAT_HISTORY_FILE.exists():
-        return []
-    
+
+    if not CONVERSATION_HISTORY_FILE.exists():
+        return {"sessions": {}}
+
     try:
-        with open(CHAT_HISTORY_FILE, "r", encoding="UTF-8") as f:
-            return json.load(f)
-    except json.JSONDecodeError:
-        return []
+        with CONVERSATION_HISTORY_FILE.open("r", encoding="utf-8") as file:
+            data = json.load(file)
+
+        if not isinstance(data, dict): # Data insert must match data type dictionary if not, returns a default template  
+            return {"sessions": {}}
+
+        """
+        {
+            "sessions": {
+                "session_1": [...],
+                "session_2": [...]
+            }
+        }
+        """
+        if "sessions" not in data: # If session is not there, returns a default template 
+            return {"sessions": {}}
+
+        return data
+
+    except (json.JSONDecodeError, OSError):
+        return {"sessions": {}}
 
 
-def save_chat_conversations(chat_history: list[dict]):
+def save_sessions(data: dict[str, Any]) -> None:
+    """
+    Save all chatbot sessions to the JSON file.
+    """
 
-    with open(CHAT_HISTORY_FILE, "w", encoding="UTF-8") as f:
-        return json.dump(chat_history, f, indent=4)
+    with CONVERSATION_HISTORY_FILE.open("w", encoding="utf-8") as file:
+        json.dump(
+            data,
+            file,
+            indent=4,
+            ensure_ascii=False,
+        )
+     
+    
