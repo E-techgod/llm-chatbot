@@ -58,12 +58,20 @@ def run_chatbot():
 
     session_id= choose_session(all_sessions)
 
+    if session_id is None:
+        print("Chatbot closed.")
+        return 
+    
+    save_sessions(all_sessions)
+
+    saved_messaged= all_sessions["sessions"][session_id]["messages"]
+
     chat_history= [
         {
             "role": "system",
             "content": SYSTEM_PROMPT
         }
-    ] + all_sessions
+    ] + saved_messaged
 
     while True:
         user_message= input("You: ").strip()
@@ -103,6 +111,8 @@ def run_chatbot():
                 if message["role"] != "system"
             ]
 
+            all_sessions["sessions"][session_id]["messages"] = history_without_system_promt
+            
             save_sessions(history_without_system_promt)
 
         else:
