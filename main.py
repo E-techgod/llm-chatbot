@@ -21,9 +21,9 @@ from storage import load_chat_conversations, save_chat_conversations
 
 "You are a helpful AI tutor. Explain things clearly and simply"
 
-SYSTEM_PROMPT= "You are a math program. Tell me only the answer to the problem"
+SYSTEM_PROMPT= "Limit your answers to 3 words maximum"
 
-MAX_MEMORY_MESSAGES= 10 # Keep the last 10 non-system messages (Users responses)
+MAX_MEMORY_MESSAGES= 4 # Keep the last 10 non-system messages (Users responses)
 
 def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[dict]:
     """
@@ -79,7 +79,9 @@ def run_chatbot():
             }
         )
 
-        response= get_chatbot_response(chat_history)
+        trimmed_chat_history = trim_chat_history(chat_history, MAX_MEMORY_MESSAGES)
+
+        response= get_chatbot_response(trimmed_chat_history)
 
         if response:
             print(f"\nAI: {response}\n")
@@ -102,7 +104,6 @@ def run_chatbot():
         else:
             print("\nAI: I'm currently unavailable")
 
-    chat_history= trim_chat_history(chat_history, MAX_MEMORY_MESSAGES)
 
 if __name__ == "__main__":
     run_chatbot()
