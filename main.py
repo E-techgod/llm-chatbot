@@ -20,10 +20,11 @@ from chatbot import get_chatbot_response
 from storage import load_chat_conversations, save_chat_conversations
 
 "You are a helpful AI tutor. Explain things clearly and simply"
+"Limit your answers to 3 words maximum or numbers"
 
-SYSTEM_PROMPT= "Limit your answers to 3 words maximum"
+SYSTEM_PROMPT= "You are a helpful AI tutor. Explain things clearly and simply"
 
-MAX_MEMORY_MESSAGES= 4 # Keep the last 10 non-system messages (Users responses)
+MAX_MEMORY_MESSAGES= 4 # Keep the last 10 non-system messages (Users/Assistant responses)
 
 def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[dict]:
     """
@@ -50,7 +51,7 @@ def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[d
 
 def run_chatbot():
     print("Welcome to your Week 9 LLM Chatbot")
-    print("Type 'exit to stop the loop")
+    print("Type 'exit' to stop the loop")
 
     saved_history= load_chat_conversations()
 
