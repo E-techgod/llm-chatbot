@@ -4,7 +4,7 @@ from typing import Any
 
 CONVERSATION_HISTORY_FILE= Path("conversations_history.json")
 
-def load_sessions() -> list[dict[str, Any]]:
+def load_sessions() -> dict[str, Any]:
     """
     Load all chatbot sessions from the JSON file.
     """
@@ -36,7 +36,7 @@ def load_sessions() -> list[dict[str, Any]]:
         return {"sessions": {}}
 
 
-def save_sessions(data: list[dict[str, Any]]) -> None:
+def save_sessions(data: dict[str, Any]) -> None:
     """
     Save all chatbot sessions to the JSON file.
     """

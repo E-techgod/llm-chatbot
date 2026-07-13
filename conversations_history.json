@@ -1,7 +1,7 @@
 {
     "sessions": {
         "b330fb94-7903-4d73-9c31-bdc3f0665ff9": {
-            "tittle": "Introduction",
+            "title": "Ny name is Elias",
             "messages": [
                 {
                     "role": "user",
@@ -14,7 +14,7 @@
             ]
         },
         "f4150b3d-4819-4819-a3d6-2d9273d514aa": {
-            "tittle": "Help with math",
+            "title": "1+1",
             "messages": [
                 {
                     "role": "user",
@@ -47,6 +47,32 @@
                 {
                     "role": "assistant",
                     "content": "7"
+                }
+            ]
+        },
+        "8dcf074c-8461-42b8-a609-c1e2bc5468f9": {
+            "title": "2+0",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "2+0"
+                },
+                {
+                    "role": "assistant",
+                    "content": "2"
+                }
+            ]
+        },
+        "7351f667-aa85-414c-a34f-5f2f316f600d": {
+            "title": "New chat",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "3+0"
+                },
+                {
+                    "role": "assistant",
+                    "content": "3"
                 }
             ]
         }
