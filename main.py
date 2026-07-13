@@ -17,14 +17,15 @@ The logic for my LLM Chatbot
         print to the screen and then append it to the chat_history list to preserve the next memory 
 """
 from chatbot import get_chatbot_response
-from storage import load_chat_conversations, save_chat_conversations
+from storage import load_sessions, save_sessions
+from menu_session import choose_session
 
 "You are a helpful AI tutor. Explain things clearly and simply"
 "Limit your answers to 3 words maximum or numbers"
 
 SYSTEM_PROMPT= "You are a helpful AI tutor. Explain things clearly and simply"
 
-MAX_MEMORY_MESSAGES= 4 # Keep the last 10 non-system messages (Users/Assistant responses)
+MAX_MEMORY_MESSAGES= 10 # Keep the last 10 non-system messages (Users/Assistant responses)
 
 def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[dict]:
     """
@@ -53,14 +54,16 @@ def run_chatbot():
     print("Welcome to your Week 9 LLM Chatbot")
     print("Type 'exit' to stop the loop")
 
-    saved_history= load_chat_conversations()
+    all_sessions= load_sessions()
+
+    session_id= choose_session(all_sessions)
 
     chat_history= [
         {
             "role": "system",
             "content": SYSTEM_PROMPT
         }
-    ] + saved_history
+    ] + all_sessions
 
     while True:
         user_message= input("You: ").strip()
@@ -100,7 +103,7 @@ def run_chatbot():
                 if message["role"] != "system"
             ]
 
-            save_chat_conversations(history_without_system_promt)
+            save_sessions(history_without_system_promt)
 
         else:
             print("\nAI: I'm currently unavailable")
