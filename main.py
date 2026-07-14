@@ -19,12 +19,13 @@ The logic for my LLM Chatbot
 from chatbot import get_chatbot_response
 from storage import load_sessions, save_sessions
 from menu_session import choose_session
+from sessions import update_session_title
 
 "You are a helpful AI tutor. Explain things clearly and simply"
 "Limit your answers to 3 words maximum or numbers"
 "You are a math program. Give me the just the correct answers"
 
-SYSTEM_PROMPT= "You are a math program. Give me the just the correct answers"
+SYSTEM_PROMPT= "Limit your answers to 3 words maximum or numbers"
 
 MAX_MEMORY_MESSAGES= 10 # Keep the last 10 non-system messages (Users/Assistant responses)
 
@@ -86,6 +87,10 @@ def run_chatbot():
             print("Chatbot closed.")
             break
         
+        update_session_title(
+            all_sessions, session_id, user_message
+        )
+
         chat_history.append(
             {
                 "role" : "user",

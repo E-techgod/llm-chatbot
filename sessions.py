@@ -1,5 +1,8 @@
+from turtle import title
 import uuid
 from typing import Any
+
+from anyio import current_time
 
 def create_new_session(all_sessions: dict[str, Any]) -> str:
     """
@@ -8,7 +11,7 @@ def create_new_session(all_sessions: dict[str, Any]) -> str:
     session_id= str(uuid.uuid4())
 
     all_sessions["sessions"][session_id]={
-        "title": "New chat",
+        "title": "New Conversation",
         "messages": []
     }
 
@@ -29,9 +32,10 @@ def display_sessions(all_sessions: dict[str, Any]) -> list[str]:
 
     for index, session_id in enumerate(session_ids, start=1):
         session= all_sessions["sessions"][session_id]
-        title= session.get("title", "No name")
+        title= session.get("title", "New Conversation")
+        message_count= len(session.get("messages", []))
 
-        print(f"{index}. {title}")
+        print(f"{index}. {title}: ({message_count} messages)")
 
     return session_ids
 
@@ -59,3 +63,21 @@ def select_existing_session(all_sessions: dict[str, Any]) -> str | None:
     except (ValueError, IndexError):
         print("Invalid conversation selection.")
         return None
+    
+def update_session_title(all_sessions: dict[str, Any], session_id: str, user_message: str) -> None:
+    """
+    Give a new conversation a basic title using the first user message.
+    """
+
+    current_title= all_sessions["sessions"][session_id]["title"]
+
+    if current_title != "New Conversation":
+        return
+    
+    title= user_message[:40]
+
+    if len(user_message) > 40:
+        title += "..."
+
+    all_sessions["sessions"][session_id]["title"]= title
+    

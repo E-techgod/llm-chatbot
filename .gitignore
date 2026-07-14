@@ -8,7 +8,7 @@ venv/
 # Python Cache
 **/__pycache__/
 *.py[cod]
-chat_history.json
+conversations_history.json
 
 # IDEs and OS files
 .DS_Store
