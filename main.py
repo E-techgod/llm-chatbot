@@ -86,6 +86,16 @@ def run_chatbot():
         if user_message.lower() == "exit":
             print("Chatbot closed.")
             break
+
+        if user_message.startswith("/"):
+            session_id, chat_history, = handle_command(
+                command= user_message,
+                all_sessions=all_sessions,
+                current_session_id= session_id
+            )
+
+            save_sessions(all_sessions)
+            continue
         
         update_session_title(
             all_sessions, session_id, user_message
