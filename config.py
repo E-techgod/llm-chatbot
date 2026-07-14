@@ -9,15 +9,14 @@ GOOGLE_GENAI_API_KEY= os.getenv("GOOGLE_GENAI_API_KEY")
 ANTHROPIC_API_KEY= os.getenv("ANTHROPIC_API_KEY")
 GROQ_API_KEY= os.getenv("GROQ_API_KEY")
 
-if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY was not found. Check your .env")
-
-if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY was not found. Check your .env")
-
-if not GOOGLE_GENAI_API_KEY:
-    raise ValueError("GOOGLE_GENAI_API_KEY was not found. Check your .env")
-
-if not ANTHROPIC_API_KEY:
-    raise ValueError("ANTHROPIC_API_KEY was not found. Check your .env")
-
+def require_key(name: str) -> str:
+    """
+    Return the API key `name`, or raise if it isn't set.
+ 
+    Called lazily, right before a provider is used, so the app can start (and
+    run on whichever providers ARE configured) even if some keys are missing.
+    """
+    value = os.getenv(name)
+    if not value:
+        raise ValueError(f"{name} was not found. Check your .env")
+    return value

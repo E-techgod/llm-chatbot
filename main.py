@@ -103,7 +103,7 @@ def run_chatbot():
         response= get_chatbot_response(trimmed_chat_history)
 
         if response:
-            print(f"\nAI: {response}\n")
+            print(f"AI: {response}")
 
             chat_history.append(
 

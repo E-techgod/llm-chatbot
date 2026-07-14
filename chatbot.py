@@ -1,17 +1,28 @@
 import os
+from google import genai
 from openai import OpenAI
 from anthropic import Anthropic
-from google import genai
+from functools import lru_cache
+from config import require_key
 
-from config import GOOGLE_GENAI_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY
-
-client_openai= OpenAI(api_key=OPENAI_API_KEY)
-client_google_genai= genai.Client(api_key=GOOGLE_GENAI_API_KEY)
-client_anthropic= Anthropic(api_key=ANTHROPIC_API_KEY)
-client_groq= OpenAI(
-    api_key=os.environ["GROQ_API_KEY"],
-    base_url="https://api.groq.com/openai/v1",
-)
+@lru_cache(maxsize=None)
+def get_groq_client() -> OpenAI:
+    return OpenAI(
+        api_key=require_key("GROQ_API_KEY"),
+        base_url="https://api.groq.com/openai/v1",
+    )
+ 
+@lru_cache(maxsize=None)
+def get_openai_client() -> OpenAI:
+    return OpenAI(api_key=require_key("OPENAI_API_KEY"))
+ 
+@lru_cache(maxsize=None)
+def get_anthropic_client() -> Anthropic:
+    return Anthropic(api_key=require_key("ANTHROPIC_API_KEY"))
+ 
+@lru_cache(maxsize=None)
+def get_genai_client() -> genai.Client:
+    return genai.Client(api_key=require_key("GOOGLE_GENAI_API_KEY"))
 
 def convert_messages_from_anthropic_to_openai_format(chat_history: list[dict]) -> tuple[str, list[dict]]:
     """
@@ -53,7 +64,7 @@ def convert_messages_from_gemini_to_openai_format(chat_history: list[dict]) -> s
 
 def get_chatbot_response_groq(chat_history: list[dict]) ->str:
 
-    response=client_groq.chat.completions.create(
+    response=get_groq_client().chat.completions.create(
         model="llama-3.1-8b-instant",
         messages=chat_history,
         temperature=0.7
@@ -71,7 +82,7 @@ def get_chatbot_response_openai(chat_history: list[dict]) -> str:
         1.3 Select the temperature 
         1.4 Return .choices[0].message.content
     """
-    responseOpenAI = client_openai.chat.completions.create( 
+    responseOpenAI = get_openai_client().chat.completions.create( 
         model= "gpt-4.1-mini", 
         messages=chat_history,
         temperature=0.7 
@@ -91,7 +102,7 @@ def get_chatbot_response_genai(chat_history: list[dict]) -> str:
     """
     prompt= convert_messages_from_gemini_to_openai_format(chat_history)
     
-    response= client_google_genai.models.generate_content(
+    response= get_genai_client().models.generate_content(
         model="gemini-3.1-flash-lite",
         contents=prompt
     )
@@ -110,7 +121,7 @@ def get_chatbot_response_anthropic(chat_history: list[dict]) -> str:
     """
     system_prompt, messages= convert_messages_from_anthropic_to_openai_format(chat_history)
 
-    response_anthropic = client_anthropic.messages.create(
+    response_anthropic = get_anthropic_client().messages.create(
 
         model="claude-haiku-4-5-20251001", 
         max_tokens=1024,
@@ -130,10 +141,10 @@ def get_chatbot_response(chat_history: list[dict]) -> str | None:
         ("OpenAI", get_chatbot_response_openai),
         ("Gemini", get_chatbot_response_genai),
     ]
- 
+
     for name, call in providers:
         try:
-            print(f"Using {name}...")
+            # print(f"{name} ")
             return call(chat_history)
         except Exception as e:
             # Missing key, rate limit, network error, etc. -> try the next one.
