@@ -154,4 +154,3 @@ def get_chatbot_response(chat_history: list[dict]) -> str | None:
         print(error)
  
     return None
-

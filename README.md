@@ -26,8 +26,11 @@ If one provider fails, the chatbot automatically tries the next one.
 - `main.py`: runs the chatbot loop and manages conversation history
 - `chatbot.py`: provider clients, message conversion helpers, and fallback logic
 - `storage.py`: loads and saves `conversations_history.json`
+- `sessions.py`: creates and manages saved chat sessions
+- `menu_session.py`: handles session selection from the CLI
 - `config.py`: loads API keys from `.env`
 - `requirements.txt`: Python dependencies
+- `tests/`: pytest suite covering memory trimming, storage, sessions, menu logic, provider fallback, and the main loop
 
 ## Setup
 
@@ -41,7 +44,7 @@ pip install -r requirements.txt
 
 ## Environment Variables
 
-Create a `.env` file in this folder with:
+Create a `.env` file in this folder with whichever provider keys you have:
 
 ```env
 GROQ_API_KEY=your_groq_key
@@ -50,22 +53,33 @@ GOOGLE_GENAI_API_KEY=your_google_key
 ANTHROPIC_API_KEY=your_anthropic_key
 ```
 
-All four keys are currently required by `config.py`.
+Keys are loaded lazily — you don't need all four. The app only requires a key for a provider at the moment it tries to use that provider, so it will start and run fine on a subset of keys (as long as at least one is set, since the fallback chain needs a provider to eventually succeed).
 
 ## Run
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 Type `exit` to close the chatbot.
 
 ## How Memory Works
 
-- The chatbot loads previous messages from `chat_history.json`
+- The chatbot loads previous messages from `conversations_history.json`
 - It always keeps the system prompt
-- It sends only the most recent `4` non-system messages to the model
+- It sends only the most recent `10` non-system messages to the model
 - After each successful reply, it saves the updated conversation back to disk
+
+## Testing
+
+This project has a pytest suite (37 tests) covering the core logic — no real API calls are made, so no API keys are required to run it.
+
+```bash
+pip install pytest openai anthropic google-genai python-dotenv
+python -m pytest
+```
+
+See `tests/TESTING.md` for a breakdown of what each test file covers.
 
 ## Notes
 
