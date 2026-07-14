@@ -18,14 +18,14 @@ If one provider fails, the chatbot automatically tries the next one.
 - CLI chat loop in `main.py`
 - System prompt applied to every conversation
 - Short-term memory using the most recent conversation messages
-- Saved chat history in `chat_history.json`
+- Saved chat history in `conversations_history.json`
 - Automatic fallback across multiple LLM providers
 
 ## Project Files
 
 - `main.py`: runs the chatbot loop and manages conversation history
 - `chatbot.py`: provider clients, message conversion helpers, and fallback logic
-- `storage.py`: loads and saves `chat_history.json`
+- `storage.py`: loads and saves `conversations_history.json`
 - `config.py`: loads API keys from `.env`
 - `requirements.txt`: Python dependencies
 

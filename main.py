@@ -1,20 +1,20 @@
 """
-The logic for my LLM Chatbot
+The logic for my LLM chatbot.
 
-1. I need to have the API key of a model and insert that into a variable, so its not public knowledge 
-    OPENAI_API_KEY or ANTHROPIC_API_KEY 
-2. Initialize the chosen model
-    ChatOpenAI or ChatAnhropic
-3. Initialize a chat memory in a python script list: chat_history given that the LLMs do not have innate memory 
-4. Start this list (chat_history) with a System Prompt:
-    "You are a helpfull coding assistant"
-5. As the conversation flows you will append the user's input and the LLM's output to the list
-6. The Chat loop, to make the app interactive wrapp the logic arround a continuous while loop.
-    If the users type exit, the loop will break exiting the chat
-    If the user type a question, wrap it around a Human Message Object and append it to the chat_history list
-    Then pass the entire ever-growing list of messages to the chat model using the .invoke() function 
-    The model will read the entire history, calculate the next response and return an AI Message, which the model will 
-        print to the screen and then append it to the chat_history list to preserve the next memory 
+1. I need to have the API key of a model and insert it into a variable so it is not public knowledge.
+    OPENAI_API_KEY or ANTHROPIC_API_KEY
+2. Initialize the chosen model.
+    ChatOpenAI or ChatAnthropic.
+3. Initialize a chat memory in a Python script list: chat_history, given that the LLMs do not have innate memory.
+4. Start this list (chat_history) with a system prompt:
+    "You are a helpful coding assistant"
+5. As the conversation flows, you will append the user's input and the LLM's output to the list.
+6. The chat loop, to make the app interactive, wrap the logic around a continuous while loop.
+    If the user types exit, the loop will break and exit the chat.
+    If the user types a question, wrap it in a Human Message object and append it to the chat_history list.
+    Then pass the entire ever-growing list of messages to the chat model using the .invoke() function.
+    The model will read the entire history, calculate the next response, and return an AI Message, which the model will
+        print to the screen and then append to the chat_history list to preserve the next memory.
 """
 from chatbot import get_chatbot_response
 from storage import load_sessions, save_sessions
@@ -23,11 +23,11 @@ from sessions import update_session_title
 
 "You are a helpful AI tutor. Explain things clearly and simply"
 "Limit your answers to 3 words maximum or numbers"
-"You are a math program. Give me the just the correct answers"
+"You are a math program. Give me just the correct answers"
 
-SYSTEM_PROMPT= "Limit your answers to 3 words maximum or numbers"
+SYSTEM_PROMPT = "Limit your answers to 3 words maximum or numbers"
 
-MAX_MEMORY_MESSAGES= 10 # Keep the last 10 non-system messages (Users/Assistant responses)
+MAX_MEMORY_MESSAGES = 10  # Keep the last 10 non-system messages (users/assistant responses)
 
 def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[dict]:
     """
@@ -66,14 +66,14 @@ def run_chatbot():
     
     save_sessions(all_sessions)
 
-    saved_messaged= all_sessions["sessions"][session_id]["messages"]
+    saved_messages = all_sessions["sessions"][session_id]["messages"]
 
-    chat_history= [
+    chat_history = [
         {
             "role": "system",
             "content": SYSTEM_PROMPT
         }
-    ] + saved_messaged
+    ] + saved_messages
 
     while True:
 
@@ -113,12 +113,12 @@ def run_chatbot():
                 }
             )
 
-            history_without_system_promt=[
+            history_without_system_prompt = [
                 message for message in chat_history
                 if message["role"] != "system"
             ]
 
-            all_sessions["sessions"][session_id]["messages"] = history_without_system_promt
+            all_sessions["sessions"][session_id]["messages"] = history_without_system_prompt
             
             save_sessions(all_sessions)
 

@@ -98,7 +98,7 @@ def get_chatbot_response_genai(chat_history: list[dict]) -> str:
 
     return response.text
 
-def get_chatbot_response_anthropic(chat_history: str) -> str:
+def get_chatbot_response_anthropic(chat_history: list[dict]) -> str:
     """ 
     1. Called the model messages.create()
         1.1. Select the model
@@ -110,7 +110,7 @@ def get_chatbot_response_anthropic(chat_history: str) -> str:
     """
     system_prompt, messages= convert_messages_from_anthropic_to_openai_format(chat_history)
 
-    responseAnthropicAI= client_anthropic.messages.create(
+    response_anthropic = client_anthropic.messages.create(
 
         model="claude-haiku-4-5-20251001", 
         max_tokens=1024,
@@ -119,42 +119,29 @@ def get_chatbot_response_anthropic(chat_history: str) -> str:
         temperature=0.7
     )
 
-    return responseAnthropicAI.content[0].text
+    return response_anthropic.content[0].text
 
 def get_chatbot_response(chat_history: list[dict]) -> str | None:
-    errors= [] 
-
-    # --- STEP 2: Try Groq ---
-    try:
-        print("Using Groq...")
-        return get_chatbot_response_groq(chat_history)
-    except Exception as e:
-        errors.append(f"Groq failled {e}") # Silently fail or log, then move to the next check
-
-    # --- STEP 1: Try Anthropic ---
-    try:
-        print("Using Anthropic...")
-        return get_chatbot_response_anthropic(chat_history)
-    except Exception as e:
-        errors.append(f"Anthropic failled {e}") # Silently fail or log, then move to the next check
-
-# --- STEP 2: Try OpenAI (Fallback 1) ---
-    try:
-        print("Using OpenAI...")
-        return get_chatbot_response_openai(chat_history)
-    except Exception as e:
-        errors.append(f"OpenAI failled {e}")
-
-    # --- STEP 2: Try Gemini (Fallback 2) ---
-    try: 
-        print("Usgin Gemini...")
-        return get_chatbot_response_genai(chat_history)
-    except Exception as e:
-        errors.append(f"Gemini failled {e}")
-
+    errors = []
+ 
+    providers = [
+        ("Groq", get_chatbot_response_groq),
+        ("Anthropic", get_chatbot_response_anthropic),
+        ("OpenAI", get_chatbot_response_openai),
+        ("Gemini", get_chatbot_response_genai),
+    ]
+ 
+    for name, call in providers:
+        try:
+            print(f"Using {name}...")
+            return call(chat_history)
+        except Exception as e:
+            # Missing key, rate limit, network error, etc. -> try the next one.
+            errors.append(f"{name} failed: {e}")
+ 
     print("Error: All models failed or ran out of funds.")
     for error in errors:
         print(error)
-
+ 
     return None
 

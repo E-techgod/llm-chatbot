@@ -16,7 +16,7 @@ def load_sessions() -> dict[str, Any]:
         with CONVERSATION_HISTORY_FILE.open("r", encoding="utf-8") as file:
             data = json.load(file)
 
-        if not isinstance(data, dict): # Data insert must match data type dictionary if not, returns a default template  
+        if not isinstance(data, dict):  # Data must match the expected dictionary structure; otherwise, return a default template.
             return {"sessions": {}}
 
         """
@@ -27,7 +27,7 @@ def load_sessions() -> dict[str, Any]:
             }
         }
         """
-        if "sessions" not in data: # If session is not there, returns a default template 
+        if "sessions" not in data:  # If the sessions key is missing, return a default template.
             return {"sessions": {}}
 
         return data

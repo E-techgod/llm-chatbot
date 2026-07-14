@@ -1,12 +1,9 @@
-from turtle import title
 import uuid
 from typing import Any
 
-from anyio import current_time
-
 def create_new_session(all_sessions: dict[str, Any]) -> str:
     """
-    Create a new sessions and returns its new id 
+    Create a new session and return its new ID.
     """
     session_id= str(uuid.uuid4())
 

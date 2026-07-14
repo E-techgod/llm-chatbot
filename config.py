@@ -10,7 +10,7 @@ ANTHROPIC_API_KEY= os.getenv("ANTHROPIC_API_KEY")
 GROQ_API_KEY= os.getenv("GROQ_API_KEY")
 
 if not OPENAI_API_KEY:
-    raise ValueError("OPEN_API_KEY was not found. Check your .env")
+    raise ValueError("OPENAI_API_KEY was not found. Check your .env")
 
 if not GROQ_API_KEY:
     raise ValueError("GROQ_API_KEY was not found. Check your .env")
@@ -20,3 +20,4 @@ if not GOOGLE_GENAI_API_KEY:
 
 if not ANTHROPIC_API_KEY:
     raise ValueError("ANTHROPIC_API_KEY was not found. Check your .env")
+
