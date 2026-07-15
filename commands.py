@@ -73,5 +73,33 @@ def rename_session(all_sessions: dict[str, Any], session_id: str, new_title: str
 
     print(f"Conversation renamed to {new_title}")
 
+def delete_session(all_sessions: dict[str, Any], session_id: str) -> str | None:
+    """
+    Delete the current session.
+
+    If sessions remain, ask the user to select another.
+    If none remain, create a new session automatically.
+    """
+
+    current_title= all_sessions["sessions"][session_id].get("title", "Untitled conversation")
+
+    confirm= input(f"Are you sure you want to delete the current session: {current_title}. Type 'yes' to confirm").strip().lower()
+
+    if confirm != "yes":
+        print("Delete cancelled")
+        return session_id
+    
+    del all_sessions["sessions"][session_id]
+
+    print("\nConversation deleted")
+
+    if not all_sessions["sessions"]:
+        new_session_id = create_new_session(all_sessions)
+        print("No sessions left. Started a new conversation.")
+        return new_session_id
+
+    print("Choose another session to continue.")
+
+    return select_existing_session(all_sessions)
 
  
