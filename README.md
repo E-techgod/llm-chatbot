@@ -65,6 +65,8 @@ Type `exit` to close the chatbot.
 
 The chatbot keeps the system prompt and only the most recent non-system messages in its active context. After each successful reply, it saves the updated conversation so the next session can pick up where it left off.
 
+Memory is isolated per session, not shared across chats. On startup, `load_sessions()` reads the entire `conversations_history.json` file into memory, but only the messages belonging to the session you create or select are loaded into the active chat history sent to the LLM. Every other saved session's messages stay untouched in storage and are never mixed in. Each session keeps its own independent message list, and `save_sessions()` writes the whole sessions file back to disk after every reply.
+
 ## Testing
 
 The project includes a pytest suite (71 tests) covering the core logic without making real API calls. You can run it with:
