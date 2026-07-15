@@ -102,4 +102,43 @@ def delete_session(all_sessions: dict[str, Any], session_id: str) -> str | None:
 
     return select_existing_session(all_sessions)
 
+def handle_commands(command: str, all_sessions: dict[str, Any], current_session_id: str) -> tuple[str, list[dict]]:
+    """
+    Handles /commands inside the chatbot  
+    """
+
+    command_parts= command.split(maxsplit=1) # Split at the first space you find : /help "rest of the prompt", spliting in two parts [0] the command and [1] the message
+    command_name= command_parts[0].lower()
+
+    if command_name == "/help":
+        show_help()
+    
+    elif command_name == "new":
+        current_session_id= new_session(all_sessions)
+    
+    elif command_name == "/sessions":
+        selected_session_id= switch_sessions(all_sessions)
+
+        if selected_session_id:
+            current_session_id= selected_session_id
+
+    elif command_name == "/rename":
+        new_title= command_parts[1] if len(command_parts) > 1 else None
+        rename_session(all_sessions, current_session_id, new_title)
+
+    elif command_name == "/delete":
+        new_session_id= delete_session(all_sessions, current_session_id)
+
+        if new_session_id:
+            current_session_id = new_session_id
+    else:
+        print("Unknown command. Type /help to see available commands.")
+
+    updated_chat_history= build_chat_history(
+        all_sessions,
+        current_session_id
+    )
+
+    return current_session_id, updated_chat_history
+
  
