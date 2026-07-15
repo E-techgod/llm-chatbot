@@ -36,7 +36,7 @@ def new_session(all_sessions: dict[str, Any]) ->str:
     session_id= create_new_session(all_sessions)
     save_sessions(all_sessions)
 
-    print("/new Creates a new conversation")
+    print("A new conversation has been created")
 
     return session_id
 
@@ -68,7 +68,7 @@ def rename_session(all_sessions: dict[str, Any], session_id: str, new_title: str
     all_sessions["sessions"][session_id]["title"] = new_title
     save_sessions(all_sessions)
 
-    print(f"\nConversation renamed to {new_title}")
+    print(f"\nConversation renamed: '{new_title}'")
 
 def delete_session(all_sessions: dict[str, Any], session_id: str) -> str | None:
     """
