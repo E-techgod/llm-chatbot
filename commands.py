@@ -44,4 +44,19 @@ def new_session(all_sessions: dict[str, Any]) ->str:
 
     return session_id
 
+def switch_sessions(all_sessions: dict[str, Any]) -> str | None:
+    """Let the user switch to an existing session"""
+    
+    session_id= select_existing_session(all_sessions)
+
+    if not session_id:
+        print("No session selected")
+        return None
+    
+    title= all_sessions["sessions"][session_id].get("title", "Untitle conversation")
+
+    print(f"Switched to {title}")
+
+    return session_id
+
  
