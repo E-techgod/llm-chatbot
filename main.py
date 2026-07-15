@@ -39,7 +39,7 @@ def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[d
 
     conversation_messages=[
         message for message in chat_history
-        if message["role"] != "system" # Includes user and assistant to be keept track of 
+        if message["role"] != "system" # Includes user and assistant to be kept track of 
     ]
 
     recent_messages= conversation_messages[-max_memory_limit:]

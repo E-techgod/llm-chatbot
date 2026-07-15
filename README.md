@@ -27,8 +27,8 @@ If one provider fails, it moves on to the next one. The app also loads API keys 
 Create and activate a virtual environment, then install the dependencies:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -67,7 +67,7 @@ The chatbot keeps the system prompt and only the most recent non-system messages
 
 ## Testing
 
-The project includes a pytest suite covering the core logic without making real API calls. You can run it with:
+The project includes a pytest suite (37 tests) covering the core logic without making real API calls. You can run it with:
 
 ```bash
 ./venv/bin/python -m pytest -q

@@ -3,8 +3,6 @@ from config import SYSTEM_PROMPT
 from storage import save_sessions
 from sessions import create_new_session, select_existing_session
 
-SYSTEM_PROMPT
-
 def build_chat_history(all_sessions: dict[str, Any], session_id: str) -> list[dict]:
 
     saved_messages = all_sessions["sessions"][session_id]["messages"]
@@ -27,7 +25,7 @@ def show_help() -> None:
 
     print("\nAvailable commands:")
     print("/help         Shows available commands")
-    print("/new          Creates a new conversations")
+    print("/new          Creates a new conversation")
     print("/sessions     Shows all conversations and switch in between")
     print("/rename       Renames the current conversation")
     print("/delete       Deletes the current conversation")
@@ -38,7 +36,7 @@ def new_session(all_sessions: dict[str, Any]) ->str:
     session_id= create_new_session(all_sessions)
     save_sessions(all_sessions)
 
-    print("\nStarted a new conversation")
+    print("/new Creates a new conversation")
 
     return session_id
 
@@ -51,7 +49,7 @@ def switch_sessions(all_sessions: dict[str, Any]) -> str | None:
         print("No session selected")
         return None
     
-    title= all_sessions["sessions"][session_id].get("title", "Untitle conversation")
+    title= all_sessions["sessions"][session_id].get("title", "Untitled conversation")
 
     print(f"Switched to {title}")
 
@@ -105,7 +103,7 @@ def handle_commands(command: str, all_sessions: dict[str, Any], current_session_
     Handles /commands inside the chatbot  
     """
 
-    command_parts= command.split(maxsplit=1) # Split at the first space you find : /help "rest of the prompt", spliting in two parts [0] the command and [1] the message
+    command_parts= command.split(maxsplit=1) # Split at the first space you find : /help "rest of the prompt", splitting in two parts [0] the command and [1] the message
     command_name= command_parts[0].lower()
 
     if command_name == "/help":
