@@ -111,7 +111,7 @@ def handle_commands(command: str, all_sessions: dict[str, Any], current_session_
     if command_name == "/help":
         show_help()
     
-    elif command_name == "new":
+    elif command_name == "/new":
         current_session_id= new_session(all_sessions)
     
     elif command_name == "/sessions":
