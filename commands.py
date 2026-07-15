@@ -59,4 +59,19 @@ def switch_sessions(all_sessions: dict[str, Any]) -> str | None:
 
     return session_id
 
+def rename_session(all_sessions: dict[str, Any], session_id: str, new_title: str | None = None) -> None:
+    """Rename current session"""
+
+    if not new_title:
+        new_title= input("New title: ").strip()
+
+    if not new_title:
+        print("Title cannot be empty")
+        return
+    
+    all_sessions["sessions"][session_id["title"]] = new_title
+
+    print(f"Conversation renamed to {new_title}")
+
+
  
