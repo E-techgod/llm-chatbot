@@ -88,3 +88,54 @@ def test_rename_session_updates_session_title(monkeypatch):
     commands.rename_session(data, "a")
 
     assert data["sessions"]["a"]["title"] == "New title"
+
+
+def test_rename_session_saves_after_updating_title(monkeypatch):
+    data = {"sessions": {"a": {"title": "Old title", "messages": []}}}
+    saved = []
+
+    monkeypatch.setattr("builtins.input", lambda _="": "New title")
+    monkeypatch.setattr(commands, "save_sessions", lambda all_sessions: saved.append(all_sessions.copy()))
+
+    commands.rename_session(data, "a")
+
+    assert data["sessions"]["a"]["title"] == "New title"
+    assert len(saved) == 1
+
+
+def test_delete_session_saves_after_removal(monkeypatch):
+    data = {
+        "sessions": {
+            "a": {"title": "First", "messages": []},
+            "b": {"title": "Second", "messages": []},
+        }
+    }
+    saved = []
+
+    monkeypatch.setattr("builtins.input", lambda _="": "yes")
+    monkeypatch.setattr(commands, "save_sessions", lambda all_sessions: saved.append(dict(all_sessions["sessions"])))
+    monkeypatch.setattr(commands, "select_existing_session", lambda all_sessions: "b")
+
+    next_session_id = commands.delete_session(data, "a")
+
+    assert "a" not in data["sessions"]
+    assert next_session_id == "b"
+    assert saved == [{"b": {"title": "Second", "messages": []}}]
+
+
+def test_delete_session_saves_again_when_auto_creating_replacement(monkeypatch):
+    data = {"sessions": {"a": {"title": "Only", "messages": []}}}
+    saved = []
+
+    def fake_create_new_session(all_sessions):
+        all_sessions["sessions"]["new-id"] = {"title": "New Conversation", "messages": []}
+        return "new-id"
+
+    monkeypatch.setattr("builtins.input", lambda _="": "yes")
+    monkeypatch.setattr(commands, "save_sessions", lambda all_sessions: saved.append(list(all_sessions["sessions"].keys())))
+    monkeypatch.setattr(commands, "create_new_session", fake_create_new_session)
+
+    next_session_id = commands.delete_session(data, "a")
+
+    assert next_session_id == "new-id"
+    assert saved == [[], ["new-id"]]

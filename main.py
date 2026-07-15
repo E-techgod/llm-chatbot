@@ -88,8 +88,6 @@ def run_chatbot():
                 all_sessions=all_sessions,
                 current_session_id= session_id
             )
-
-            save_sessions(all_sessions)
             continue
         
         update_session_title(

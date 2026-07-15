@@ -66,6 +66,7 @@ def rename_session(all_sessions: dict[str, Any], session_id: str, new_title: str
         return
 
     all_sessions["sessions"][session_id]["title"] = new_title
+    save_sessions(all_sessions)
 
     print(f"\nConversation renamed to {new_title}")
 
@@ -86,11 +87,13 @@ def delete_session(all_sessions: dict[str, Any], session_id: str) -> str | None:
         return session_id
     
     del all_sessions["sessions"][session_id]
+    save_sessions(all_sessions)
 
     print("\nConversation deleted")
 
     if not all_sessions["sessions"]:
         new_session_id = create_new_session(all_sessions)
+        save_sessions(all_sessions)
         print("No sessions left. Started a new conversation.")
         return new_session_id
 
