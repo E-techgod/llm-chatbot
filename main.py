@@ -16,18 +16,12 @@ The logic for my LLM chatbot.
     The model will read the entire history, calculate the next response, and return an AI Message, which the model will
         print to the screen and then append to the chat_history list to preserve the next memory.
 """
-from chatbot import get_chatbot_response
-from storage import load_sessions, save_sessions
+from commands import handle_commands
 from menu_session import choose_session
+from chatbot import get_chatbot_response
 from sessions import update_session_title
-
-"You are a helpful AI tutor. Explain things clearly and simply"
-"Limit your answers to 3 words maximum or numbers"
-"You are a math program. Give me just the correct answers"
-
-SYSTEM_PROMPT = "Limit your answers to 3 words maximum or numbers"
-
-MAX_MEMORY_MESSAGES = 10  # Keep the last 10 non-system messages (users/assistant responses)
+from storage import load_sessions, save_sessions
+from config import SYSTEM_PROMPT, MAX_MEMORY_MESSAGES
 
 def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[dict]:
     """
@@ -88,7 +82,7 @@ def run_chatbot():
             break
 
         if user_message.startswith("/"):
-            session_id, chat_history, = handle_command(
+            session_id, chat_history, = handle_commands(
                 command= user_message,
                 all_sessions=all_sessions,
                 current_session_id= session_id

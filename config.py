@@ -9,6 +9,15 @@ GOOGLE_GENAI_API_KEY= os.getenv("GOOGLE_GENAI_API_KEY")
 ANTHROPIC_API_KEY= os.getenv("ANTHROPIC_API_KEY")
 GROQ_API_KEY= os.getenv("GROQ_API_KEY")
 
+"You are a helpful AI tutor. Explain things clearly and simply"
+"Limit your answers to 3 words maximum or numbers"
+"You are a math program. Give me just the correct answers"
+
+SYSTEM_PROMPT = "Limit your answers to 3 words maximum or numbers"
+
+MAX_MEMORY_MESSAGES = 10  # Keep the last 10 non-system messages (users/assistant responses)
+
+
 def require_key(name: str) -> str:
     """
     Return the API key `name`, or raise if it isn't set.
@@ -20,3 +29,4 @@ def require_key(name: str) -> str:
     if not value:
         raise ValueError(f"{name} was not found. Check your .env")
     return value
+
