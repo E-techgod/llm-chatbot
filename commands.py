@@ -35,4 +35,13 @@ def show_help() -> None:
     print("/delete       Deletes the current conversation")
     print("exit          Closes chatbot")
 
+def new_session(all_sessions: dict[str, Any]) ->str:
+    """Create and switch to a new conversations"""
+    session_id= create_new_session(all_sessions)
+    save_sessions(all_sessions)
+
+    print("\nStarted a new conversation")
+
+    return session_id
+
  
