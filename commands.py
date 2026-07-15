@@ -9,14 +9,12 @@ def build_chat_history(all_sessions: dict[str, Any], session_id: str) -> list[di
 
     saved_messages = all_sessions["sessions"][session_id]["messages"]
 
-    chat_history = [
+    return [
         {
             "role": "system",
             "content": SYSTEM_PROMPT
         }
     ] + saved_messages
-
-    return chat_history
 
 def show_help() -> None:
     """Display available chat commands
@@ -60,18 +58,18 @@ def switch_sessions(all_sessions: dict[str, Any]) -> str | None:
     return session_id
 
 def rename_session(all_sessions: dict[str, Any], session_id: str, new_title: str | None = None) -> None:
-    """Rename current session"""
+    """Rename current session."""
 
     if not new_title:
-        new_title= input("New title: ").strip()
+        new_title = input("New title: ").strip()
 
     if not new_title:
         print("Title cannot be empty")
         return
-    
-    all_sessions["sessions"][session_id["title"]] = new_title
 
-    print(f"Conversation renamed to {new_title}")
+    all_sessions["sessions"][session_id]["title"] = new_title
+
+    print(f"\nConversation renamed to {new_title}")
 
 def delete_session(all_sessions: dict[str, Any], session_id: str) -> str | None:
     """
@@ -83,7 +81,7 @@ def delete_session(all_sessions: dict[str, Any], session_id: str) -> str | None:
 
     current_title= all_sessions["sessions"][session_id].get("title", "Untitled conversation")
 
-    confirm= input(f"Are you sure you want to delete the current session: {current_title}. Type 'yes' to confirm").strip().lower()
+    confirm= input(f"Are you sure you want to delete the current session: {current_title}. Type 'yes' to confirm\n").strip().lower()
 
     if confirm != "yes":
         print("Delete cancelled")
@@ -134,11 +132,11 @@ def handle_commands(command: str, all_sessions: dict[str, Any], current_session_
     else:
         print("Unknown command. Type /help to see available commands.")
 
-    updated_chat_history= build_chat_history(
+    chat_history= build_chat_history(
         all_sessions,
         current_session_id
     )
 
-    return current_session_id, updated_chat_history
+    return current_session_id, chat_history
 
  

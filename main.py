@@ -49,6 +49,7 @@ def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[d
 def run_chatbot():
     print("Welcome to your Week 9 LLM Chatbot")
     print("Type 'exit' to stop the loop")
+    print("To see the commands available please start or continue a chat and run '/help'")
 
     all_sessions= load_sessions()
 

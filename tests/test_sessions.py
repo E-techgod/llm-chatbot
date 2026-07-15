@@ -10,6 +10,7 @@ import uuid
 import pytest
 
 import sessions
+import commands
 
 
 def test_create_new_session_adds_and_returns_id(empty_sessions):
@@ -78,3 +79,12 @@ def test_select_existing_when_empty_returns_none(empty_sessions, monkeypatch):
     # Should short-circuit before ever prompting.
     monkeypatch.setattr("builtins.input", lambda _="": pytest.fail("should not prompt"))
     assert sessions.select_existing_session(empty_sessions) is None
+
+
+def test_rename_session_updates_session_title(monkeypatch):
+    data = {"sessions": {"a": {"title": "Old title", "messages": []}}}
+    monkeypatch.setattr("builtins.input", lambda _="": "New title")
+
+    commands.rename_session(data, "a")
+
+    assert data["sessions"]["a"]["title"] == "New title"
