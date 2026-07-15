@@ -67,8 +67,8 @@ The chatbot keeps the system prompt and only the most recent non-system messages
 
 ## Testing
 
-The project includes a pytest suite (37 tests) covering the core logic without making real API calls. You can run it with:
+The project includes a pytest suite (71 tests) covering the core logic without making real API calls. You can run it with:
 
 ```bash
-./venv/bin/python -m pytest -q
+./venv/bin/python3 -m pytest -q
 ```
