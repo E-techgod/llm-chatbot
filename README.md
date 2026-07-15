@@ -1,40 +1,30 @@
 # LLM Chatbot
 
-A Python command-line chatbot with short-term memory, local chat persistence, and multi-provider fallback across Groq, Anthropic, OpenAI, and Google Gemini.
+A Python command-line chatbot that feels like a lightweight assistant you can keep talking to from the terminal. It remembers recent context, saves conversations between runs, and can fall back across multiple providers when one is unavailable.
 
-## Current Model Order
+## What it does
 
-The app tries providers in this order:
+The app gives you a simple chat experience with a few helpful behaviors:
 
-1. Groq: `llama-3.1-8b-instant`
-2. Anthropic: `claude-haiku-4-5-20251001`
-3. OpenAI: `gpt-4.1-mini`
-4. Google Gemini: `gemini-3.1-flash-lite`
+- it keeps a system prompt and a rolling memory of recent messages
+- it saves conversations so you can return to them later
+- it lets you create, switch between, rename, and delete conversation sessions
+- it tries multiple providers if one fails or is missing a key
 
-If one provider fails, the chatbot automatically tries the next one.
+## Provider fallback
 
-## Features
+The chatbot currently tries providers in this order:
 
-- CLI chat loop in `main.py`
-- System prompt applied to every conversation
-- Short-term memory using the most recent conversation messages
-- Saved chat history in `conversations_history.json`
-- Automatic fallback across multiple LLM providers
+1. Groq
+2. Anthropic
+3. OpenAI
+4. Google Gemini
 
-## Project Files
-
-- `main.py`: runs the chatbot loop and manages conversation history
-- `chatbot.py`: provider clients, message conversion helpers, and fallback logic
-- `storage.py`: loads and saves `conversations_history.json`
-- `sessions.py`: creates and manages saved chat sessions
-- `menu_session.py`: handles session selection from the CLI
-- `config.py`: loads API keys from `.env`
-- `requirements.txt`: Python dependencies
-- `tests/`: pytest suite covering memory trimming, storage, sessions, menu logic, provider fallback, and the main loop
+If one provider fails, it moves on to the next one. The app also loads API keys lazily, so you do not need to provide every key up front.
 
 ## Setup
 
-Create and activate a virtual environment, then install dependencies:
+Create and activate a virtual environment, then install the dependencies:
 
 ```bash
 python3 -m venv .venv
@@ -42,9 +32,9 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Environment Variables
+## Environment variables
 
-Create a `.env` file in this folder with whichever provider keys you have:
+Create a `.env` file in this folder with whichever provider keys you want to use:
 
 ```env
 GROQ_API_KEY=your_groq_key
@@ -53,35 +43,32 @@ GOOGLE_GENAI_API_KEY=your_google_key
 ANTHROPIC_API_KEY=your_anthropic_key
 ```
 
-Keys are loaded lazily — you don't need all four. The app only requires a key for a provider at the moment it tries to use that provider, so it will start and run fine on a subset of keys (as long as at least one is set, since the fallback chain needs a provider to eventually succeed).
+You can start the app with just one working key, and the fallback chain will handle the rest.
 
-## Run
+## Run it
 
 ```bash
 python3 main.py
 ```
 
+From the chat prompt you can also use slash commands:
+
+- `/help` to see the available commands
+- `/new` to start a fresh conversation
+- `/sessions` to switch between saved conversations
+- `/rename` to rename the current conversation
+- `/delete` to delete the current conversation
+
 Type `exit` to close the chatbot.
 
-## How Memory Works
+## How memory works
 
-- The chatbot loads previous messages from `conversations_history.json`
-- It always keeps the system prompt
-- It sends only the most recent `10` non-system messages to the model
-- After each successful reply, it saves the updated conversation back to disk
+The chatbot keeps the system prompt and only the most recent non-system messages in its active context. After each successful reply, it saves the updated conversation so the next session can pick up where it left off.
 
 ## Testing
 
-This project has a pytest suite (37 tests) covering the core logic — no real API calls are made, so no API keys are required to run it.
+The project includes a pytest suite covering the core logic without making real API calls. You can run it with:
 
 ```bash
-pip install pytest openai anthropic google-genai python-dotenv
-python -m pytest
+./venv/bin/python -m pytest -q
 ```
-
-See `tests/TESTING.md` for a breakdown of what each test file covers.
-
-## Notes
-
-- Gemini currently receives a flattened text prompt converted from the shared chat history format.
-- Anthropic receives the system prompt separately from the conversation messages.
