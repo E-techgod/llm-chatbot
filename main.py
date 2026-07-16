@@ -1,20 +1,27 @@
 """
-The logic for my LLM chatbot.
+Main chatbot loop and memory window orchestration.
 
-1. I need to have the API key of a model and insert it into a variable so it is not public knowledge.
-    OPENAI_API_KEY or ANTHROPIC_API_KEY
-2. Initialize the chosen model.
-    ChatOpenAI or ChatAnthropic.
-3. Initialize a chat memory in a Python script list: chat_history, given that the LLMs do not have innate memory.
-4. Start this list (chat_history) with a system prompt:
-    "You are a helpful coding assistant"
-5. As the conversation flows, you will append the user's input and the LLM's output to the list.
-6. The chat loop, to make the app interactive, wrap the logic around a continuous while loop.
-    If the user types exit, the loop will break and exit the chat.
-    If the user types a question, wrap it in a Human Message object and append it to the chat_history list.
-    Then pass the entire ever-growing list of messages to the chat model using the .invoke() function.
-    The model will read the entire history, calculate the next response, and return an AI Message, which the model will
-        print to the screen and then append to the chat_history list to preserve the next memory.
+This file is no longer a single-file chatbot implementation. Its job in the
+current project is to coordinate the main runtime flow across the session,
+command, storage, and provider modules:
+
+1. Load saved conversations from `conversations_history.json`.
+2. Ask the user to start a new conversation or continue an existing one.
+3. Rebuild `chat_history` by prepending the shared system prompt to the saved
+   messages of the selected session.
+4. Run the interactive loop:
+   - `exit` closes the chatbot.
+   - `/commands` are delegated to `handle_commands()`, which may create,
+     switch, rename, or delete sessions and then rebuild the chat history.
+   - Normal user input is appended to the current session history.
+5. Apply `trim_chat_history()` before calling the model so the app keeps the
+   system prompt plus only the most recent non-system messages in memory.
+6. Delegate response generation to `get_chatbot_response()`, which tries the
+   provider fallback chain implemented in `chatbot.py`.
+7. On success, append the assistant reply, auto-title a new session from the
+   first user message, and persist the conversation back to JSON.
+8. On provider failure, remove the dangling user turn so stored history stays
+   consistent.
 """
 
 from commands import handle_commands
