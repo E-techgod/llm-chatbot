@@ -16,6 +16,7 @@ conversations_history.json
 
 # Graphify files
 graphify-out/
+llm_context_payload.txt
 
 # Claude files
 .claudeignore
