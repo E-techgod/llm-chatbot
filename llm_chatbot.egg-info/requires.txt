@@ -1,0 +1,9 @@
+anthropic==0.116.0
+google-genai==2.11.0
+openai==2.45.0
+python-dotenv==1.2.2
+
+[dev]
+black==6.5.1
+pytest==9.1.1
+ruff==0.15.21

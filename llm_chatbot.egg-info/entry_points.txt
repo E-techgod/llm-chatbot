@@ -1,0 +1,2 @@
+[console_scripts]
+llm-chatbot = main:run_chatbot

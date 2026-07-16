@@ -23,7 +23,7 @@ command, storage, and provider modules:
 8. On provider failure, remove the dangling user turn so stored history stays
    consistent.
 """
-
+from dotenv import load_dotenv
 from commands import handle_commands
 from menu_session import choose_session
 from chatbot import get_chatbot_response
@@ -58,7 +58,8 @@ def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[d
 
 
 def run_chatbot():
-    print("Welcome to your Week 9 LLM Chatbot")
+    load_dotenv()
+    print("Welcome to the Multi-Model Chatbot Dashboard!")
     print("Type 'exit' to stop the loop")
     print(
         "To see the commands available please start or continue a chat and run '/help'"

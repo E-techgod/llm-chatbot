@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-chatbot"
+version = "0.1.0"
+description = "A dynamic multi-model chatbot with resilient session handling."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic==0.116.0",
+    "google-genai==2.11.0",
+    "openai==2.45.0",
+    "python-dotenv==1.2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black==6.5.1",
+    "pytest==9.1.1",
+    "ruff==0.15.21",
+]
+
+[project.scripts]
+llm-chatbot = "main:run_chatbot"
+
+[tool.setuptools]
+py-modules = ["main", "commands", "storage", "sessions", "config", "menu_session", "chatbot"]
