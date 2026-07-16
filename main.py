@@ -89,10 +89,6 @@ def run_chatbot():
                 current_session_id= session_id
             )
             continue
-        
-        update_session_title(
-            all_sessions, session_id, user_message
-        )
 
         chat_history.append(
             {
@@ -107,6 +103,10 @@ def run_chatbot():
 
         if response:
             print(f"AI: {response}\n")
+
+            update_session_title(
+                all_sessions, session_id, user_message
+            )
 
             chat_history.append(
 
