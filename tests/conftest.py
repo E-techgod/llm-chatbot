@@ -9,8 +9,10 @@ is imported by pytest before the test modules, so the env is ready in time.
 The dummy keys are never used to make real network calls — every test that
 touches a provider mocks it out.
 """
+
 import os
 import sys
+import pytest
 from pathlib import Path
 
 # Make the project modules (chatbot, storage, sessions, ...) importable
@@ -19,11 +21,13 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 # Must be set before config.py / chatbot.py are imported anywhere.
-for _key in ("OPENAI_API_KEY", "GROQ_API_KEY", "GOOGLE_GENAI_API_KEY", "ANTHROPIC_API_KEY"):
+for _key in (
+    "OPENAI_API_KEY",
+    "GROQ_API_KEY",
+    "GOOGLE_GENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+):
     os.environ.setdefault(_key, "test-dummy-key")
-
-import pytest
-
 
 @pytest.fixture
 def sample_history():

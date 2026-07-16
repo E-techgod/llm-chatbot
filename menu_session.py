@@ -1,6 +1,7 @@
 from typing import Any
 from sessions import create_new_session, select_existing_session
 
+
 def choose_session(all_sessions: dict[str, Any]) -> str | None:
     """
     Create a new conversation or select an existing one.
@@ -21,7 +22,7 @@ def choose_session(all_sessions: dict[str, Any]) -> str | None:
 
             if session_id:
                 return session_id
-    
+
         elif choice == "3":
             return None
 

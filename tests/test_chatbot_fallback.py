@@ -6,6 +6,7 @@ This is the reliability core of the app: it tries providers in order
 if all fail. We mock each provider so no network calls happen; we only assert
 on ordering, short-circuiting, and the all-fail path.
 """
+
 import chatbot
 
 PROVIDERS = [
@@ -29,6 +30,7 @@ def _patch_all(monkeypatch, behaviors):
             if isinstance(behavior, Exception):
                 raise behavior
             return behavior
+
         return fake
 
     for name in PROVIDERS:

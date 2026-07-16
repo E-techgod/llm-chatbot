@@ -6,6 +6,7 @@ only the most recent N user/assistant messages. If this is wrong, the bot
 either forgets the system prompt (wrong persona) or sends an ever-growing
 history to the API (rising cost + eventual context-limit errors).
 """
+
 from main import trim_chat_history
 
 

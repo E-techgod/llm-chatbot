@@ -5,6 +5,7 @@ Everything external is mocked (session choice, the LLM call, input, and save),
 so this exercises the real loop wiring: a user turn is appended, the assistant
 reply is appended and persisted, blank input is rejected, and "exit" stops.
 """
+
 import main
 
 

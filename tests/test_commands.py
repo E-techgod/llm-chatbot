@@ -293,9 +293,7 @@ def test_command_rebuilds_chat_history(
     sessions_data: dict[str, Any],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    old_history = expected_history(
-        sessions_data["sessions"]["session-1"]["messages"]
-    )
+    old_history = expected_history(sessions_data["sessions"]["session-1"]["messages"])
     monkeypatch.setattr(
         commands,
         "select_existing_session",
@@ -328,9 +326,7 @@ def test_command_does_not_call_llm(
     command_mock = Mock(
         return_value=(
             "session-1",
-            expected_history(
-                sessions_data["sessions"]["session-1"]["messages"]
-            ),
+            expected_history(sessions_data["sessions"]["session-1"]["messages"]),
         )
     )
 
@@ -382,8 +378,7 @@ def test_rename_preserves_spaces_inside_title(
     )
 
     assert (
-        sessions_data["sessions"]["session-1"]["title"]
-        == "A title with several words"
+        sessions_data["sessions"]["session-1"]["title"] == "A title with several words"
     )
 
 
@@ -551,9 +546,7 @@ def test_inline_rename_with_only_spaces_is_rejected(
 def test_command_input_is_not_added_to_session_messages(
     sessions_data: dict[str, Any],
 ) -> None:
-    original_messages = deepcopy(
-        sessions_data["sessions"]["session-1"]["messages"]
-    )
+    original_messages = deepcopy(sessions_data["sessions"]["session-1"]["messages"])
 
     commands.handle_commands(
         "/help",
@@ -561,10 +554,7 @@ def test_command_input_is_not_added_to_session_messages(
         "session-1",
     )
 
-    assert (
-        sessions_data["sessions"]["session-1"]["messages"]
-        == original_messages
-    )
+    assert sessions_data["sessions"]["session-1"]["messages"] == original_messages
 
 
 def test_multiple_commands_do_not_duplicate_system_prompt(
@@ -581,12 +571,8 @@ def test_multiple_commands_do_not_duplicate_system_prompt(
         "session-1",
     )
 
-    assert sum(
-        message["role"] == "system" for message in first_history
-    ) == 1
-    assert sum(
-        message["role"] == "system" for message in second_history
-    ) == 1
+    assert sum(message["role"] == "system" for message in first_history) == 1
+    assert sum(message["role"] == "system" for message in second_history) == 1
 
 
 def test_delete_does_not_select_another_session_when_cancelled(

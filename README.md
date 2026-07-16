@@ -11,6 +11,8 @@ The app gives you a simple chat experience with a few helpful behaviors:
 - it lets you create, switch between, rename, and delete conversation sessions
 - it tries multiple providers if one fails or is missing a key
 
+The graph report in `graphify-out/GRAPH_REPORT.md` identifies the main control points as `choose_session()`, `get_chatbot_response()`, `handle_commands()`, `trim_chat_history()`, and `load_sessions()`, which is the flow shown above.
+
 ## Provider fallback
 
 The chatbot currently tries providers in this order:
@@ -21,6 +23,61 @@ The chatbot currently tries providers in this order:
 4. Google Gemini
 
 If one provider fails, it moves on to the next one. The app also loads API keys lazily, so you do not need to provide every key up front.
+
+## Architecture
+
+```mermaid
+graph TD
+    User["👤 User Input"]
+    Main["main.py<br/>(Entry Point)"]
+    MenuSession["menu_session.py<br/>(Session Menu)"]
+    Commands["commands.py<br/>(Command Handler)"]
+    Sessions["sessions.py<br/>(Session Ops)"]
+    Storage["storage.py<br/>(JSON Persistence)"]
+    StorageFile["conversations_history.json<br/>(Session Data)"]
+    
+    Chatbot["chatbot.py<br/>(LLM Coordinator)"]
+    Config["config.py<br/>(Config & Keys)"]
+    
+    Groq["Groq API"]
+    Anthropic["Anthropic API"]
+    OpenAI["OpenAI API"]
+    Gemini["Google Gemini API"]
+    
+    TrimHistory["trim_chat_history()<br/>(Memory Management)"]
+    
+    User -->|Input| Main
+    Main -->|Choose Session| MenuSession
+    MenuSession -->|Load/Select| Sessions
+    Sessions -->|Read/Write| Storage
+    Storage -->|Persist| StorageFile
+    
+    Main -->|Chat Loop| Chatbot
+    User -->|Commands| Commands
+    Commands -->|Handle| Sessions
+    
+    Chatbot -->|Get Keys| Config
+    Chatbot -->|Try Provider 1| Groq
+    Chatbot -->|Fallback 2| Anthropic
+    Chatbot -->|Fallback 3| OpenAI
+    Chatbot -->|Fallback 4| Gemini
+    
+    Chatbot -->|Manage Memory| TrimHistory
+    TrimHistory -->|Update| Sessions
+    Sessions -->|Save| Storage
+    
+    Groq -->|Response| Chatbot
+    Anthropic -->|Response| Chatbot
+    OpenAI -->|Response| Chatbot
+    Gemini -->|Response| Chatbot
+```
+
+**Key Control Flow:**
+1. `main.py` orchestrates the chat loop
+2. User input routes to either `menu_session.py` (session management) or goes to `chatbot.py` (chat processing)
+3. `chatbot.py` tries LLM providers in sequence, using lazy-loaded keys from `config.py`
+4. `trim_chat_history()` keeps only system prompt + recent messages to manage context window
+5. `storage.py` persists all sessions to `conversations_history.json` after each update
 
 ## Setup
 

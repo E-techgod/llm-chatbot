@@ -8,6 +8,7 @@ branches matter as much as the happy path.
 CONVERSATION_HISTORY_FILE is a module-level Path, so we point it at a temp file
 per test via monkeypatch instead of touching the real repo file.
 """
+
 import json
 
 import pytest
@@ -28,7 +29,11 @@ def test_load_returns_default_when_file_missing(temp_store):
 
 
 def test_save_then_load_roundtrips(temp_store):
-    data = {"sessions": {"id1": {"title": "t", "messages": [{"role": "user", "content": "hi"}]}}}
+    data = {
+        "sessions": {
+            "id1": {"title": "t", "messages": [{"role": "user", "content": "hi"}]}
+        }
+    }
     storage.save_sessions(data)
     assert temp_store.exists()
     assert storage.load_sessions() == data

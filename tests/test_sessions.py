@@ -5,6 +5,7 @@ select_existing_session parses raw user input, so the failure modes (letters,
 out-of-range numbers, "0") are the important cases: they must degrade to None
 rather than raise.
 """
+
 import uuid
 
 import pytest
@@ -95,7 +96,11 @@ def test_rename_session_saves_after_updating_title(monkeypatch):
     saved = []
 
     monkeypatch.setattr("builtins.input", lambda _="": "New title")
-    monkeypatch.setattr(commands, "save_sessions", lambda all_sessions: saved.append(all_sessions.copy()))
+    monkeypatch.setattr(
+        commands,
+        "save_sessions",
+        lambda all_sessions: saved.append(all_sessions.copy()),
+    )
 
     commands.rename_session(data, "a")
 
@@ -113,7 +118,11 @@ def test_delete_session_saves_after_removal(monkeypatch):
     saved = []
 
     monkeypatch.setattr("builtins.input", lambda _="": "yes")
-    monkeypatch.setattr(commands, "save_sessions", lambda all_sessions: saved.append(dict(all_sessions["sessions"])))
+    monkeypatch.setattr(
+        commands,
+        "save_sessions",
+        lambda all_sessions: saved.append(dict(all_sessions["sessions"])),
+    )
     monkeypatch.setattr(commands, "select_existing_session", lambda all_sessions: "b")
 
     next_session_id = commands.delete_session(data, "a")
@@ -128,11 +137,18 @@ def test_delete_session_saves_again_when_auto_creating_replacement(monkeypatch):
     saved = []
 
     def fake_create_new_session(all_sessions):
-        all_sessions["sessions"]["new-id"] = {"title": "New Conversation", "messages": []}
+        all_sessions["sessions"]["new-id"] = {
+            "title": "New Conversation",
+            "messages": [],
+        }
         return "new-id"
 
     monkeypatch.setattr("builtins.input", lambda _="": "yes")
-    monkeypatch.setattr(commands, "save_sessions", lambda all_sessions: saved.append(list(all_sessions["sessions"].keys())))
+    monkeypatch.setattr(
+        commands,
+        "save_sessions",
+        lambda all_sessions: saved.append(list(all_sessions["sessions"].keys())),
+    )
     monkeypatch.setattr(commands, "create_new_session", fake_create_new_session)
 
     next_session_id = commands.delete_session(data, "a")
