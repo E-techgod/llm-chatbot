@@ -6,6 +6,8 @@ so this exercises the real loop wiring: a user turn is appended, the assistant
 reply is appended and persisted, blank input is rejected, and "exit" stops.
 """
 
+import pytest
+
 import main
 
 
@@ -67,3 +69,21 @@ def test_none_session_choice_returns_without_llm(monkeypatch):
 
 def pytest_fail():
     raise AssertionError("this code path should not be reached")
+
+
+@pytest.mark.parametrize("error_type", [KeyboardInterrupt, EOFError])
+def test_interrupts_close_without_traceback(monkeypatch, capsys, error_type):
+    sessions_data = {"sessions": {"sess-1": {"title": "New chat", "messages": []}}}
+
+    monkeypatch.setattr(main, "load_sessions", lambda: sessions_data)
+    monkeypatch.setattr(main, "choose_session", lambda all_sessions: "sess-1")
+    monkeypatch.setattr(main, "save_sessions", lambda data: None)
+    monkeypatch.setattr(
+        "builtins.input", lambda _="": (_ for _ in ()).throw(error_type())
+    )
+
+    main.run_chatbot()
+
+    captured = capsys.readouterr()
+    assert "Traceback" not in captured.err
+    assert "Chatbot closed." in captured.out

@@ -58,76 +58,82 @@ def trim_chat_history(chat_history: list[dict], max_memory_limit: int) -> list[d
 
 
 def run_chatbot():
-    load_dotenv()
-    print("Welcome to the Multi-Model Chatbot Dashboard!")
-    print("Type 'exit' to stop the loop")
-    print(
-        "To see the commands available please start or continue a chat and run '/help'"
-    )
-
-    all_sessions = load_sessions()
-
-    session_id = choose_session(all_sessions)
-
-    if session_id is None:
-        print("Chatbot closed.")
-        return
-
-    save_sessions(all_sessions)
-
-    saved_messages = all_sessions["sessions"][session_id]["messages"]
-
-    chat_history = [{"role": "system", "content": SYSTEM_PROMPT}] + saved_messages
-
     while True:
-
-        user_message = input("You: ").strip()
-
-        if not user_message:
-            print("Please type a message\n")
-            continue
-
-        if user_message.lower() == "exit":
-            print("Chatbot closed.")
-            break
-
-        if user_message.startswith("/"):
-            (
-                session_id,
-                chat_history,
-            ) = handle_commands(
-                command=user_message,
-                all_sessions=all_sessions,
-                current_session_id=session_id,
+        try:
+            load_dotenv()
+            print("Welcome to the Multi-Model Chatbot Dashboard!")
+            print("Type 'exit' to stop the loop")
+            print(
+                "To see the commands available please start or continue a chat and run '/help'"
             )
-            continue
 
-        chat_history.append({"role": "user", "content": user_message})
+            all_sessions = load_sessions()
 
-        trimmed_chat_history = trim_chat_history(chat_history, MAX_MEMORY_MESSAGES)
+            session_id = choose_session(all_sessions)
 
-        response = get_chatbot_response(trimmed_chat_history)
-
-        if response:
-            print(f"AI: {response}\n")
-
-            update_session_title(all_sessions, session_id, user_message)
-
-            chat_history.append({"role": "assistant", "content": response})
-
-            history_without_system_prompt = [
-                message for message in chat_history if message["role"] != "system"
-            ]
-
-            all_sessions["sessions"][session_id][
-                "messages"
-            ] = history_without_system_prompt
+            if session_id is None:
+                print("Chatbot closed.")
+                return
 
             save_sessions(all_sessions)
 
-        else:
-            print("\nAI: I'm currently unavailable")
-            chat_history.pop()  # no reply -> drop the dangling user turn so history stays alternating
+            saved_messages = all_sessions["sessions"][session_id]["messages"]
+
+            chat_history = [{"role": "system", "content": SYSTEM_PROMPT}] + saved_messages
+
+            while True:
+
+                user_message = input("You: ").strip()
+
+                if not user_message:
+                    print("Please type a message\n")
+                    continue
+
+                if user_message.lower() == "exit":
+                    print("Chatbot closed.")
+                    return
+
+                if user_message.startswith("/"):
+                    (
+                        session_id,
+                        chat_history,
+                    ) = handle_commands(
+                        command=user_message,
+                        all_sessions=all_sessions,
+                        current_session_id=session_id,
+                    )
+                    continue
+
+                chat_history.append({"role": "user", "content": user_message})
+
+                trimmed_chat_history = trim_chat_history(chat_history, MAX_MEMORY_MESSAGES)
+
+                response = get_chatbot_response(trimmed_chat_history)
+
+                if response:
+                    print(f"AI: {response}\n")
+
+                    update_session_title(all_sessions, session_id, user_message)
+
+                    chat_history.append({"role": "assistant", "content": response})
+
+                    history_without_system_prompt = [
+                        message for message in chat_history if message["role"] != "system"
+                    ]
+
+                    all_sessions["sessions"][session_id][
+                        "messages"
+                    ] = history_without_system_prompt
+
+                    save_sessions(all_sessions)
+
+                else:
+                    print("\nAI: I'm currently unavailable")
+                    chat_history.pop()  # no reply -> drop the dangling user turn so history stays alternating
+
+        except (KeyboardInterrupt, EOFError):
+            print("\nChatbot closed.")
+            return
 
 
 if __name__ == "__main__":

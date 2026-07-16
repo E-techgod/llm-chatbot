@@ -125,6 +125,51 @@ The chatbot keeps the system prompt and only the most recent non-system messages
 
 Memory is isolated per session, not shared across chats. On startup, `load_sessions()` reads the entire `conversations_history.json` file into memory, but only the messages belonging to the session you create or select are loaded into the active chat history sent to the LLM. Every other saved session's messages stay untouched in storage and are never mixed in. Each session keeps its own independent message list, and `save_sessions()` writes the whole sessions file back to disk after every reply.
 
+## JSON structure
+
+The saved JSON file stores sessions and their non-system messages. The `system` prompt is not persisted inside each session message list; it is added back at runtime from `config.SYSTEM_PROMPT`.
+
+Stored in `conversations_history.json`:
+
+```json
+{
+  "sessions": {
+    "<session_id>": {
+      "title": "<session title>",
+      "messages": [
+        {
+          "role": "user",
+          "content": "<user message>"
+        },
+        {
+          "role": "assistant",
+          "content": "<assistant response>"
+        }
+      ]
+    }
+  }
+}
+```
+
+Built in memory before calling the model:
+
+```json
+[
+  {
+    "role": "system",
+    "content": "<system prompt from config.SYSTEM_PROMPT>"
+  },
+  {
+    "role": "user",
+    "content": "<user message>"
+  },
+  {
+    "role": "assistant",
+    "content": "<assistant response>"
+  }
+]
+```
+
 ## Testing
 
 The project includes a pytest suite (71 tests) covering the core logic without making real API calls. You can run it with:
