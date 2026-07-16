@@ -11,7 +11,7 @@ The app gives you a simple chat experience with a few helpful behaviors:
 - it lets you create, switch between, rename, and delete conversation sessions
 - it tries multiple providers if one fails or is missing a key
 
-The graph report in `graphify-out/GRAPH_REPORT.md` identifies the main control points as `choose_session()`, `get_chatbot_response()`, `handle_commands()`, `trim_chat_history()`, and `load_sessions()`, which is the flow shown above.
+The graph report in `graphify-out/GRAPH_REPORT.md` highlights the same core control points the code uses today: session selection, command handling, history trimming, response generation, and session loading/saving.
 
 ## Provider fallback
 
@@ -47,14 +47,17 @@ graph TD
     TrimHistory["trim_chat_history()<br/>(Memory Management)"]
     
     User -->|Input| Main
+    Main -->|Load Sessions| Storage
     Main -->|Choose Session| MenuSession
-    MenuSession -->|Load/Select| Sessions
-    Sessions -->|Read/Write| Storage
+    MenuSession -->|Create/Select| Sessions
+    Commands -->|Create/Switch/Rename/Delete| Sessions
+    Commands -->|Rebuild History| Main
+    Main -->|Save Sessions| Storage
     Storage -->|Persist| StorageFile
     
-    Main -->|Chat Loop| Chatbot
-    User -->|Commands| Commands
-    Commands -->|Handle| Sessions
+    Main -->|Trim Active History| TrimHistory
+    TrimHistory -->|Send Active Context| Chatbot
+    Main -->|Title New Session| Sessions
     
     Chatbot -->|Get Keys| Config
     Chatbot -->|Try Provider 1| Groq
@@ -62,22 +65,19 @@ graph TD
     Chatbot -->|Fallback 3| OpenAI
     Chatbot -->|Fallback 4| Gemini
     
-    Chatbot -->|Manage Memory| TrimHistory
-    TrimHistory -->|Update| Sessions
-    Sessions -->|Save| Storage
-    
     Groq -->|Response| Chatbot
     Anthropic -->|Response| Chatbot
     OpenAI -->|Response| Chatbot
     Gemini -->|Response| Chatbot
+    Chatbot -->|Reply| Main
 ```
 
 **Key Control Flow:**
 1. `main.py` orchestrates the chat loop
-2. User input routes to either `menu_session.py` (session management) or goes to `chatbot.py` (chat processing)
-3. `chatbot.py` tries LLM providers in sequence, using lazy-loaded keys from `config.py`
-4. `trim_chat_history()` keeps only system prompt + recent messages to manage context window
-5. `storage.py` persists all sessions to `conversations_history.json` after each update
+2. startup loads saved sessions, then `menu_session.py` lets you start a new conversation or continue an existing one
+3. slash commands route through `commands.py`; normal messages stay in the active chat loop
+4. `main.py` trims the active history before `chatbot.py` tries providers in sequence using keys loaded through `config.py`
+5. successful replies update the session title when needed and persist the non-system message history back to `conversations_history.json`
 
 ## Setup
 
@@ -109,6 +109,12 @@ You can start the app with just one working key, and the fallback chain will han
 python3 main.py
 ```
 
+Installed as a package, the project also exposes:
+
+```bash
+llm-chatbot
+```
+
 From the chat prompt you can also use slash commands:
 
 - `/help` to see the available commands
@@ -123,7 +129,7 @@ Type `exit` to close the chatbot.
 
 The chatbot keeps the system prompt and only the most recent non-system messages in its active context. After each successful reply, it saves the updated conversation so the next session can pick up where it left off.
 
-Memory is isolated per session, not shared across chats. On startup, `load_sessions()` reads the entire `conversations_history.json` file into memory, but only the messages belonging to the session you create or select are loaded into the active chat history sent to the LLM. Every other saved session's messages stay untouched in storage and are never mixed in. Each session keeps its own independent message list, and `save_sessions()` writes the whole sessions file back to disk after every reply.
+Memory is isolated per session, not shared across chats. On startup, the app loads the sessions file, but only the messages belonging to the session you create or select are rebuilt into the active chat history sent to the LLM. Every other saved session stays separate in storage and is never mixed into the active conversation. After each successful reply, the app writes the updated sessions file back to disk.
 
 ## JSON structure
 
@@ -172,7 +178,7 @@ Built in memory before calling the model:
 
 ## Testing
 
-The project includes a pytest suite (71 tests) covering the core logic without making real API calls. You can run it with:
+The project includes a pytest suite (78 collected tests) covering the core logic without making real API calls. You can run it with:
 
 ```bash
 ./venv/bin/python3 -m pytest -q
