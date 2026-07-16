@@ -127,6 +127,7 @@ def run_chatbot():
 
         else:
             print("\nAI: I'm currently unavailable")
+            chat_history.pop() # no reply -> drop the dangling user turn so history stays alternating
 
 
 if __name__ == "__main__":
