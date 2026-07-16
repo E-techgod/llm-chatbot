@@ -1,3 +1,5 @@
+[![Tests](https://github.com/e-techgod/llm-chatbot/actions/workflows/tests.yml/badge.svg)](https://github.com/e-techgod/llm-chatbot/actions/workflows/tests.yml)
+
 # LLM Chatbot
 
 A Python command-line chatbot that feels like a lightweight assistant you can keep talking to from the terminal. It remembers recent context, saves conversations between runs, and can fall back across multiple providers when one is unavailable.
