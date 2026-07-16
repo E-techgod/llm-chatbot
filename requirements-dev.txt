@@ -1,3 +1,4 @@
 python-dotenv==1.2.2
 black==6.5.1
 ruff==0.15.21
+-e .
