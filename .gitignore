@@ -21,3 +21,4 @@ llm_context_payload.txt
 # Claude files
 .claudeignore
 README_FACTS.md
+llm_chatbot.egg-info/
