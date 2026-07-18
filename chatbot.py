@@ -4,7 +4,8 @@ from anthropic import Anthropic
 from functools import lru_cache
 from config import require_key
 
-
+# Lazy Loading
+# This tries Groq first, if it fails use OpenAI, then Anthropic, then Google.
 @lru_cache(maxsize=None)
 def get_groq_client() -> OpenAI:
     return OpenAI(
@@ -92,7 +93,7 @@ def get_chatbot_response_openai(chat_history: list[dict]) -> str:
         model="gpt-4.1-mini", messages=chat_history, temperature=0.7
     )
 
-    return responseOpenAI.choices[0].message.content
+    return responseOpenAI.choices[0].message.content # Raw API/Model call
 
 
 def get_chatbot_response_genai(chat_history: list[dict]) -> str:
